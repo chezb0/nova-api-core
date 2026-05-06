@@ -39,7 +39,7 @@ source venv/bin/activate  # Linux / Mac
 venv\Scripts\activate     # Windows  
 
 # Install Nova
-pip install https://github.com/chezb0/nova-api-core.git
+pip install git+https://github.com/chezb0/nova-api-core.git
 
 # Create project
 nova init my_project  
