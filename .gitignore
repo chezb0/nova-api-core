@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.env
+.vscode/
+build/
+venv/
+src/nova_api_core.egg-info
+.pytest_cache/
+.mypy_cache
+.coverage
+.mypy_cache/

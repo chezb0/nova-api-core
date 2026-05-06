@@ -1,0 +1,67 @@
+[project]
+name = "nova-api-core"
+version = "0.1.0"
+description = "Clean Architecture FastAPI Framework"
+authors = [{ name = "Gence Lucien dit Bemanjary" }]
+requires-python = ">=3.12"
+
+dependencies = [
+    "fastapi==0.135.3",
+    "uvicorn==0.43.0",
+    "pydantic==2.13.0",
+    "sqlalchemy==2.0.49",
+    "httpx==0.27.2",
+    "python-dotenv==1.2.2",
+    "hvac==2.4.0",
+    "typer==0.15.1",
+    "click==8.1.7",
+    "rich==13.9.0",
+    "types-hvac==2.4.0.20260408",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.0.3",
+    "ruff==0.15.9",
+
+    # Code quality
+    "black>=24.0.0",
+    "isort>=8.0.1",
+    "flake8>=7.0.0",
+    "mypy>=1.20.1",
+    "pre-commit>=3.7.0"
+]
+
+[build-system]
+requires = ["setuptools==70.0.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["nova_api_core*"]
+namespaces = false
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+
+[tool.isort]
+profile = "black"
+
+[tool.flake8]
+max-line-length = 88
+ignore = ["E203", "W503", "E501"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+
+[project.scripts]
+nova = "nova_api_core.cli.main:main"
