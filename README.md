@@ -6,7 +6,7 @@ Nova is designed for developers who want **full control, strong architecture, an
 
 ---
 
-## ✨ Why Nova?
+## ✨ Why Nova ?
 
 Most frameworks either hide complexity or enforce rigid patterns. Nova takes a different approach:
 
@@ -46,7 +46,7 @@ nova init my_project
 cd my_project  
 
 # Run API
-uvicorn app:app --reload  
+uvicorn app:app --host localhost --port 8001
 
 ---
 

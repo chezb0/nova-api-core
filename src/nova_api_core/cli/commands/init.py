@@ -235,13 +235,22 @@ LOG_OUTPUT=CONSOLE
 
     (project_path / ".env.dev").write_text("""DEBUG=true
 """)
+    
+    (project_path / ".env.prod").write_text("""# Your prod's env variables here.
+""")
 
     # =========================
     # PYPROJECT
     # =========================
-    (project_path / "pyproject.toml").write_text(f"""[project]
+    (project_path / "pyproject.toml").write_text(
+    f"""[project]
 name = "{name}"
 version = "0.1.0"
+requires-python = ">=3.12"
+
+dependencies = [
+    "nova-api-core @ git+https://github.com/chezb0/nova-api-core.git@latest"
+]
 """)
 
     print("[green]✔ Nova project created successfully[/green]")
