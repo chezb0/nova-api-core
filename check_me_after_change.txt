@@ -1,0 +1,3 @@
+# After each change, run this command and add __init__.py
+# to every directory displayed in the output
+find src -type d ! -path "*/__pycache__*" ! -exec test -f "{}/__init__.py" \; -print
