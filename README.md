@@ -76,8 +76,8 @@ PORT=8000
 from dataclasses import dataclass  
 @dataclass  
 class AppConfig:  
-&nbsp;&nbsp;&nbsp;&nbsp;PORT: int  
-&nbsp;&nbsp;&nbsp;&nbsp;DEBUG: bool 
+    PORT: int  
+    DEBUG: bool 
 ```
 
 ### Loading
@@ -88,8 +88,8 @@ bootstrap = ConfigLoader.load_bootstrap(bootstrap_provider)
 env_provider = EnvProvider(f".env.{bootstrap.ENV}")  
 
 config = ConfigLoader.load_app_config(  
-&nbsp;&nbsp;&nbsp;&nbsp;AppConfig,  
-&nbsp;&nbsp;&nbsp;&nbsp;providers=[env_provider],  
+    AppConfig,  
+    providers=[env_provider],  
 ) 
 ```
 
@@ -98,11 +98,11 @@ config = ConfigLoader.load_app_config(
 ## 📜 Logging (JSON Structured)
 ```
 logger = JsonLogger(  
-&nbsp;&nbsp;&nbsp;&nbsp;app_name=bootstrap.APP_NAME,  
-&nbsp;&nbsp;&nbsp;&nbsp;environment=bootstrap.ENV,  
-&nbsp;&nbsp;&nbsp;&nbsp;# log_level=bootstrap.LOG_LEVEL  
-&nbsp;&nbsp;&nbsp;&nbsp;# log_output=bootstrap.LOG_OUTPUT  
-&nbsp;&nbsp;&nbsp;&nbsp;# log_file_path=bootstrap.LOG_FILE_PATH  
+    app_name=bootstrap.APP_NAME,  
+    environment=bootstrap.ENV,  
+    # log_level=bootstrap.LOG_LEVEL  
+    # log_output=bootstrap.LOG_OUTPUT  
+    # log_file_path=bootstrap.LOG_FILE_PATH  
 ) 
 ```
 
@@ -117,8 +117,8 @@ Example:
 ```
 
 ERROR_HANDLERS = [  
-&nbsp;&nbsp;&nbsp;&nbsp;AppExceptionHandler(),  
-&nbsp;&nbsp;&nbsp;&nbsp;GenericExceptionHandler(),  
+    AppExceptionHandler(),  
+    GenericExceptionHandler(),  
 ] 
 ```
 
@@ -134,18 +134,18 @@ ROUTES = [health_router]
 
 @router.get("/health")  
 def health():  
-&nbsp;&nbsp;&nbsp;&nbsp;return {"status": "ok"}  
+    return {"status": "ok"}  
 
 ---
 
 ## 🧠 App Factory
 ```
 app = create_app(  
-&nbsp;&nbsp;&nbsp;&nbsp;config=config,  
-&nbsp;&nbsp;&nbsp;&nbsp;bootstrap=bootstrap,  
-&nbsp;&nbsp;&nbsp;&nbsp;logger=logger,  
-&nbsp;&nbsp;&nbsp;&nbsp;routes=ROUTES,  
-&nbsp;&nbsp;&nbsp;&nbsp;error_handlers=ERROR_HANDLERS,  
+    config=config,  
+    bootstrap=bootstrap,  
+    logger=logger,  
+    routes=ROUTES,  
+    error_handlers=ERROR_HANDLERS,  
 ) 
 ```
 
