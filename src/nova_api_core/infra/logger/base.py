@@ -1,6 +1,5 @@
 import json
 import logging
-import traceback
 from datetime import datetime, timezone
 
 from nova_api_core.core.abstraction.logger import Logger
@@ -45,10 +44,7 @@ def setup_uvicorn_logging(logger: Logger, log_level: str) -> None:
         def emit(self, record: logging.LogRecord) -> None:
             try:
 
-                if (
-                    record.name == "uvicorn.error"
-                    and record.exc_info
-                ):
+                if record.name == "uvicorn.error" and record.exc_info:
                     return
 
                 message = record.getMessage()

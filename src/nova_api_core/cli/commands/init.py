@@ -1,9 +1,12 @@
-import typer
 import subprocess
 from pathlib import Path
+
+import typer
 from rich import print
-from nova_api_core.core.types.database_type import DatabaseType
+
 from nova_api_core.cli.renderers.nova_renderer import NovaRenderer
+from nova_api_core.core.types.database_type import DatabaseType
+
 
 def init_command(name: str, db: DatabaseType) -> None:
     project_path = Path.cwd() / name
@@ -23,24 +26,26 @@ def init_command(name: str, db: DatabaseType) -> None:
         "infra/db",
         "presentation/routes",
         "presentation/exception_handlers",
-        "tests"
+        "tests",
     ]
-    
+
     for folder in folders:
         path = project_path / folder
         path.mkdir(parents=True, exist_ok=True)
-        
+
         # Création des __init__.py récursifs pour le packaging
         current = project_path
-        for part in folder.split('/'):
+        for part in folder.split("/"):
             current = current / part
             (current / "__init__.py").touch()
 
     # 2. Génération et écriture des fichiers racine et config
     (project_path / "app.py").write_text(renderer.render_app_entrypoint(db))
     (project_path / "pyproject.toml").write_text(renderer.render_pyproject(name))
-    (project_path / "core/config/app_config.py").write_text(renderer.render_app_config(db))
-    
+    (project_path / "core/config/app_config.py").write_text(
+        renderer.render_app_config(db)
+    )
+
     # Environnement
     (project_path / ".env.base").write_text(renderer.render_bootstrap_env(name))
     (project_path / ".env.dev").write_text(renderer.render_env_content(db, is_dev=True))
@@ -61,12 +66,16 @@ def init_command(name: str, db: DatabaseType) -> None:
 
     # 5. Git Init & .gitignore
     try:
-        subprocess.run(["git", "init"], cwd=project_path, check=True, capture_output=True)
-        (project_path / ".gitignore").write_text("__pycache__/\n.env*\n.venv/\n*.db\n.pytest_cache/\n")
+        subprocess.run(
+            ["git", "init"], cwd=project_path, check=True, capture_output=True
+        )
+        (project_path / ".gitignore").write_text(
+            "__pycache__/\n.env*\n.venv/\n*.db\n.pytest_cache/\n"
+        )
     except Exception:
         pass
 
     print(f"\n[bold green]✨ Project {name} is ready![/bold green]")
-    print(f"[yellow]Next steps:[/yellow]")
+    print("[yellow]Next steps:[/yellow]")
     print(f"  1. cd {name}")
-    print(f"  2. uvicorn app:app --host localhost --port 8001")
+    print("  2. uvicorn app:app --host localhost --port 8001")

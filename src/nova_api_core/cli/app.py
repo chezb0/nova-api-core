@@ -1,5 +1,4 @@
 import typer
-from typing import Optional
 
 from nova_api_core.cli.commands.init import init_command
 from nova_api_core.core.types.database_type import DatabaseType
@@ -7,7 +6,7 @@ from nova_api_core.core.types.database_type import DatabaseType
 # On initialise l'application Typer
 app = typer.Typer(
     help="Nova Framework CLI - Un générateur de microservices propre et robuste.",
-    rich_markup_mode="rich"
+    rich_markup_mode="rich",
 )
 
 
@@ -21,15 +20,13 @@ def main_callback(ctx: typer.Context) -> None:
 
 @app.command()
 def init(
-    name: str = typer.Argument(
-        ..., 
-        help="Le nom du dossier de votre nouveau projet."
-    ),
+    name: str = typer.Argument(..., help="Le nom du dossier de votre nouveau projet."),
     db: DatabaseType = typer.Option(
-        DatabaseType.NONE, 
-        "--db", "-d", 
-        help="Le moteur de base de données à configurer par défaut."
-    )
+        DatabaseType.NONE,
+        "--db",
+        "-d",
+        help="Le moteur de base de données à configurer par défaut.",
+    ),
 ) -> None:
     """
     Génère la structure complète d'un nouveau projet Nova.

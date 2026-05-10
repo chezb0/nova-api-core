@@ -1,7 +1,9 @@
-from nova_api_core.cli.app import app
 from rich.console import Console
 
+from nova_api_core.cli.app import app
+
 console = Console()
+
 
 def main() -> None:
     try:

@@ -22,7 +22,7 @@ DB_METADATA = {
             "DB_NAME": "nova_db",
             "DB_MAX_RETRIES": "3",
             "DB_RETRY_DELAY": "1.0",
-        }
+        },
     },
     DatabaseType.MONGODB: {
         "manager_import": "from nova_api_core.infra.db.mongo.mongo_database_manager import MongoDatabaseManager",
@@ -43,13 +43,9 @@ DB_METADATA = {
             "DB_NAME": "nova_db",
             "DB_MAX_RETRIES": "3",
             "DB_RETRY_DELAY": "1.0",
-        }
+        },
     },
-    DatabaseType.NONE: {
-        "manager_import": "",
-        "config_fields": {},
-        "env_defaults": {}
-    }
+    DatabaseType.NONE: {"manager_import": "", "config_fields": {}, "env_defaults": {}},
 }
 
 BOOTSTRAP_DEFAULTS = {
@@ -57,5 +53,5 @@ BOOTSTRAP_DEFAULTS = {
     "APP_VERSION": "0.1.0",
     "ENV": "dev",
     "LOG_LEVEL": "DEBUG",
-    "LOG_OUTPUT": "CONSOLE"
+    "LOG_OUTPUT": "CONSOLE",
 }

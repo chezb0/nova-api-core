@@ -1,11 +1,12 @@
 import asyncio
-from motor.motor_asyncio import AsyncIOMotorClient
 from contextlib import asynccontextmanager
 
+from motor.motor_asyncio import AsyncIOMotorClient
+
+from nova_api_core.core.abstraction.database_manager import DatabaseManager
 from nova_api_core.core.application.exception.exception import (
     DatabaseException,
 )
-from nova_api_core.core.abstraction.database_manager import DatabaseManager
 
 
 class MongoDatabaseManager(DatabaseManager):
