@@ -9,3 +9,4 @@ src/nova_api_core.egg-info
 .mypy_cache
 .coverage
 .mypy_cache/
+docs

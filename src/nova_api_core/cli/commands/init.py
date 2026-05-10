@@ -1,257 +1,81 @@
+import subprocess
 from pathlib import Path
 
 import typer
 from rich import print
 
+from nova_api_core.cli.renderers.nova_renderer import NovaRenderer
+from nova_api_core.core.types.database_type import DatabaseType
 
-def init_command(name: str = typer.Argument(..., help="Project name")) -> None:
-    """
-    Initialize a fully wired Nova project:
 
-    - BootstrapConfig loaded via EnvProvider
-    - AppConfig loaded via ConfigLoader + providers
-    - JsonLogger initialized from bootstrap
-    - Default ROUTES + ERROR_HANDLERS
-    - Health route included
-    - Exception handling ready (AppException + Generic)
-    """
-
+def init_command(name: str, db: DatabaseType) -> None:
     project_path = Path.cwd() / name
-
     if project_path.exists():
-        print("[red]Project already exists[/red]")
-        raise typer.Exit(code=1)
+        print(f"[red]Error: Folder {name} already exists.[/red]")
+        raise typer.Exit(1)
 
-    print(f"[green]Creating Nova project:[/green] {name}")
+    renderer = NovaRenderer()
+    print(f"[green]🚀 Initializing {name} with {db.value}...[/green]")
 
-    # =========================
-    # DIRECTORIES
-    # =========================
-    (project_path / "core/config").mkdir(parents=True, exist_ok=True)
-    (project_path / "infra/logger").mkdir(parents=True, exist_ok=True)
-    (project_path / "presentation/routes").mkdir(parents=True, exist_ok=True)
-    (project_path / "presentation/exception_handlers").mkdir(
-        parents=True, exist_ok=True
-    )
-    (project_path / "tests").mkdir(parents=True, exist_ok=True)
+    # 1. Création de l'arborescence complète
+    folders = [
+        "core/config",
+        "core/use_cases",
+        "core/domain/models",
+        "infra/logger",
+        "infra/db",
+        "presentation/routes",
+        "presentation/exception_handlers",
+        "tests",
+    ]
 
-    for folder in ["core", "infra", "presentation", "tests"]:
-        (project_path / folder / "__init__.py").touch()
+    for folder in folders:
+        path = project_path / folder
+        path.mkdir(parents=True, exist_ok=True)
 
-    # =========================
-    # APP CONFIG (USER DOMAIN)
-    # =========================
+        # Création des __init__.py récursifs pour le packaging
+        current = project_path
+        for part in folder.split("/"):
+            current = current / part
+            (current / "__init__.py").touch()
+
+    # 2. Génération et écriture des fichiers racine et config
+    (project_path / "app.py").write_text(renderer.render_app_entrypoint(db))
+    (project_path / "pyproject.toml").write_text(renderer.render_pyproject(name))
     (project_path / "core/config/app_config.py").write_text(
-        '''from dataclasses import dataclass
-
-
-@dataclass
-class AppConfig:
-    """
-    User application configuration.
-
-    Define your business configuration here.
-
-    Examples:
-        DATABASE_URL: str
-        REDIS_URL: str
-        JWT_SECRET: str
-        PORT: int
-        DEBUG: bool
-    """
-    pass
-'''
+        renderer.render_app_config(db)
     )
 
-    # =========================
-    # BOOTSTRAP WRAPPER
-    # =========================
-    (project_path / "core/config/bootstrap.py").write_text(
-        """from nova_api_core.core.config.bootstrap import BootstrapConfig
+    # Environnement
+    (project_path / ".env.base").write_text(renderer.render_bootstrap_env(name))
+    (project_path / ".env.dev").write_text(renderer.render_env_content(db, is_dev=True))
+    (project_path / ".env.prod").write_text("# Add here your production's variables...")
 
-# Loaded via ConfigLoader:
-# - .env.base
-# - .env.{ENV}
-# - optional Vault provider
-"""
-    )
-
-    # =========================
-    # LOGGER WRAPPER
-    # =========================
-    (project_path / "infra/logger/json_logger.py").write_text(
-        """from nova_api_core.infra.logger.json_logger import JsonLogger
-
-# Structured logger:
-# - timestamp
-# - level
-# - message
-# - data
-# - environment
-# - app_name
-
-# Optional bootstrap-driven config:
-# log_level
-# log_output
-# log_file_path
-"""
-    )
-
-    # =========================
-    # HEALTH ROUTE
-    # =========================
+    # 3. Initialisation des Routes via Templates
     (project_path / "presentation/routes/health.py").write_text(
-        """from fastapi import APIRouter
-
-router = APIRouter()
-
-
-@router.get("/health")
-def health():
-    return {
-        "status": "ok",
-        "service": "nova-app"
-    }
-"""
+        renderer.render_structure("health_route", {"APP_NAME": name})
     )
-
-    # =========================
-    # ROUTES REGISTRY
-    # =========================
     (project_path / "presentation/routes/__init__.py").write_text(
-        """from .health import router as health_router
-
-ROUTES = [
-    health_router,
-]
-"""
+        renderer.render_structure("routes_init")
     )
 
-    # =========================
-    # ERROR HANDLERS
-    # =========================
-    (
-        project_path / "presentation/exception_handlers/app_exception_handler.py"
-    ).write_text(
-        """from nova_api_core.presentation.exception_handlers.app_exception_handler import AppExceptionHandler
-"""
-    )
-
-    (
-        project_path / "presentation/exception_handlers/generic_exception_handler.py"
-    ).write_text(
-        """from nova_api_core.presentation.exception_handlers.generic_exception_handler import GenericExceptionHandler
-"""
-    )
-
+    # 4. Initialisation des Handlers via Templates
     (project_path / "presentation/exception_handlers/__init__.py").write_text(
-        """from .app_exception_handler import AppExceptionHandler
-from .generic_exception_handler import GenericExceptionHandler
-
-ERROR_HANDLERS = [
-    AppExceptionHandler(),
-    GenericExceptionHandler(),
-]
-"""
+        renderer.render_structure("handlers_init")
     )
 
-    # =========================
-    # APP ENTRYPOINT (REAL WIRING)
-    # =========================
-    (project_path / "app.py").write_text(
-        """from nova_api_core.presentation.app_factory import create_app
+    # 5. Git Init & .gitignore
+    try:
+        subprocess.run(
+            ["git", "init"], cwd=project_path, check=True, capture_output=True
+        )
+        (project_path / ".gitignore").write_text(
+            "__pycache__/\n.env*\n.venv/\n*.db\n.pytest_cache/\n"
+        )
+    except Exception:
+        pass
 
-from nova_api_core.core.config.loader import ConfigLoader
-from nova_api_core.core.config.providers.env_provider import EnvProvider
-
-from infra.logger.json_logger import JsonLogger
-from presentation.routes import ROUTES
-from presentation.exception_handlers import ERROR_HANDLERS
-
-from core.config.app_config import AppConfig
-
-
-# =========================
-# BOOTSTRAP LOAD
-# =========================
-bootstrap_provider = EnvProvider(".env.base")
-bootstrap = ConfigLoader.load_bootstrap(bootstrap_provider)
-
-# =========================
-# ENV LOAD (DYNAMIC)
-# =========================
-env_provider = EnvProvider(f".env.{bootstrap.ENV}")
-
-# =========================
-# APP CONFIG LOAD
-# =========================
-providers = [
-    env_provider,
-    # future: VaultProvider()
-]
-
-config = ConfigLoader.load_app_config(
-    AppConfig,
-    providers=providers,
-)
-
-# =========================
-# LOGGER
-# =========================
-logger = JsonLogger(
-    app_name=bootstrap.APP_NAME,
-    environment=bootstrap.ENV,
-
-    # =========================
-    # OPTIONAL (BOOTSTRAP DRIVEN)
-    # =========================
-    # log_level=bootstrap.LOG_LEVEL,
-    # log_output=bootstrap.LOG_OUTPUT,
-    # log_file_path=bootstrap.LOG_FILE_PATH,
-)
-
-# =========================
-# APP CREATION
-# =========================
-app = create_app(
-    config=config,
-    bootstrap=bootstrap,
-    logger=logger,
-    routes=ROUTES,
-    error_handlers=ERROR_HANDLERS,
-)
-"""
-    )
-
-    # =========================
-    # ENV FILES
-    # =========================
-    (project_path / ".env.base").write_text("""APP_NAME=MyApp
-APP_VERSION=0.1.0
-ENV=dev
-LOG_LEVEL=DEBUG
-LOG_OUTPUT=CONSOLE
-""")
-
-    (project_path / ".env.dev").write_text("""DEBUG=true
-""")
-    
-    (project_path / ".env.prod").write_text("""# Your prod's env variables here.
-""")
-
-    # =========================
-    # PYPROJECT
-    # =========================
-    (project_path / "pyproject.toml").write_text(
-    f"""[project]
-name = "{name}"
-version = "0.1.0"
-requires-python = ">=3.12"
-
-dependencies = [
-    "nova-api-core @ git+https://github.com/chezb0/nova-api-core.git@latest"
-]
-""")
-
-    print("[green]✔ Nova project created successfully[/green]")
-    print("[cyan]✔ Bootstrap + Config + Logger + Routes + ErrorHandlers wired[/cyan]")
+    print(f"\n[bold green]✨ Project {name} is ready![/bold green]")
+    print("[yellow]Next steps:[/yellow]")
+    print(f"  1. cd {name}")
+    print("  2. uvicorn app:app --host localhost --port 8001")

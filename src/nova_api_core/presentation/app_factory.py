@@ -36,25 +36,29 @@ def create_app(
     async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         logger.info("Starting Nova API")
 
-        if db_manager:
-            await db_manager.connect()
+        try:
+            if db_manager:
+                await db_manager.connect()
 
-        yield
+            yield
 
-        logger.info("Shutting down Nova API")
+        except AppException as app_exception:
+            logger.critical(
+                app_exception.technical_details or "[APP EXCEPTION] STARTUP FAILED"
+            )
+            raise
 
-        if db_manager:
-            await db_manager.disconnect()
+        except Exception as e:
+            logger.critical(str(e))
+            raise
+
+        finally:
+            logger.info("Shutting down Nova API")
+
+            if db_manager:
+                await db_manager.disconnect()
 
     try:
-        # =========================
-        # Logging (uvicorn/starlette)
-        # =========================
-        setup_uvicorn_logging(
-            logger=logger,
-            log_level=bootstrap.LOG_LEVEL,
-        )
-
         # =========================
         # FastAPI app
         # =========================
@@ -106,18 +110,31 @@ def create_app(
         # =========================
         # Error handlers
         # =========================
+        def build_exception_handler(handler: ErrorHandler):
+
+            async def _handler(
+                request: Request,
+                exc: Exception,
+            ) -> JSONResponse:
+                err = handler.handle(exc, logger)
+                return to_fastapi_response(err)
+
+            return _handler
+
         if error_handlers:
             for handler in error_handlers:
+                app.add_exception_handler(
+                    handler.exception,
+                    build_exception_handler(handler),
+                )
 
-                async def _handler(
-                    request: Request,
-                    exc: Exception,
-                    h: Any = handler,
-                ) -> JSONResponse:
-                    err = h.handle(exc, logger)
-                    return to_fastapi_response(err)
-
-                app.add_exception_handler(handler.exception, _handler)
+        # =========================
+        # Logging (uvicorn/starlette)
+        # =========================
+        setup_uvicorn_logging(
+            logger=logger,
+            log_level=bootstrap.LOG_LEVEL,
+        )
 
         return app
     except AppException as app_exception:
