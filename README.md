@@ -44,11 +44,15 @@ venv\Scripts\activate     # Windows
 pip install git+https://github.com/chezb0/nova-api-core.git
 
 # Create project
-nova init my_project (optional: --db sqlachemy | mongodb)
-cd my_project  
+```
+nova init my_project (optional: --db sqlalchemy | mongodb, this command automatically generates and configures your database manager)
+cd my_project
+```
 
 # Run API
+```
 uvicorn app:app --host localhost --port 8001
+```
 
 ---
 
@@ -129,13 +133,13 @@ ERROR_HANDLERS = [
 ---
 
 ## 🌐 Routing
-
+```
 ROUTES = [health_router]  
 
 @router.get("/health")  
 def health():  
     return {"status": "ok"}  
-
+```
 ---
 
 ## 🧠 App Factory
