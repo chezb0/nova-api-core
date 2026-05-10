@@ -41,27 +41,30 @@ def setup_uvicorn_logging(logger: Logger, log_level: str) -> None:
     }
 
     class InterceptHandler(logging.Handler):
+
         def emit(self, record: logging.LogRecord) -> None:
             try:
+
+                if (
+                    record.name == "uvicorn.error"
+                    and record.exc_info
+                ):
+                    return
+
+                message = record.getMessage()
+
+                if message.startswith("Traceback (most recent call last):"):
+                    return
+
                 log_func = level_map.get(record.levelno, logger.info)
 
                 log_func(
-                    record.getMessage(),
+                    message,
                     data={
                         "logger": record.name,
                         "level": record.levelname,
-                        "module": record.module,
                     },
                 )
-
-                if record.exc_info:
-                    logger.error(
-                        "Exception occurred",
-                        data={
-                            "logger": record.name,
-                            "trace": traceback.format_exception(*record.exc_info),
-                        },
-                    )
 
             except Exception:
                 pass

@@ -1,0 +1,37 @@
+from nova_api_core.presentation.app_factory import create_app
+from nova_api_core.core.config.loader import ConfigLoader
+from nova_api_core.core.config.providers.env_provider import EnvProvider
+
+# Correction 1: Utilisation du logger du core
+from nova_api_core.infra.logger.json_logger import JsonLogger
+
+from presentation.routes import ROUTES
+from presentation.exception_handlers import ERROR_HANDLERS
+from core.config.app_config import AppConfig
+
+{{DATABASE_IMPORT}}
+
+# 1. BOOTSTRAP
+bootstrap_provider = EnvProvider(".env.base")
+bootstrap = ConfigLoader.load_bootstrap(bootstrap_provider)
+
+# 2. APP CONFIG (Correction 2: Ajout du Type Hinting pour l'autocomplétion)
+env_provider = EnvProvider(f".env.{bootstrap.ENV}")
+config: AppConfig = ConfigLoader.load_app_config(AppConfig, providers=[env_provider])
+
+# 3. LOGGER
+logger = JsonLogger(app_name=bootstrap.APP_NAME, environment=bootstrap.ENV)
+
+# 4. DATABASE SETUP (Correction 3: Appel effectif de la fonction générée)
+{{DATABASE_SETUP}}
+database_manager = get_database_manager(config)
+
+# 5. APP CREATION
+app = create_app(
+    config=config,
+    bootstrap=bootstrap,
+    logger=logger,
+    routes=ROUTES,
+    error_handlers=ERROR_HANDLERS,
+    # db_manager=database_manager, Activate this if your database is ready   
+)

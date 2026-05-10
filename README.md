@@ -42,7 +42,7 @@ venv\Scripts\activate     # Windows
 pip install git+https://github.com/chezb0/nova-api-core.git
 
 # Create project
-nova init my_project  
+nova init my_project (optional: --db sqlachemy | mongodb)
 cd my_project  
 
 # Run API
