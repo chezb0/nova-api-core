@@ -41,7 +41,9 @@ venv\Scripts\activate     # Windows
 ```
 
 # Install Nova
+```
 pip install git+https://github.com/chezb0/nova-api-core.git
+```
 
 # Create project
 ```
