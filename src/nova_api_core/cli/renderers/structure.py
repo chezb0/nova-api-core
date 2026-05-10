@@ -1,4 +1,5 @@
 from typing import Any, Dict
+
 from nova_api_core.cli.renderers.base import BaseRenderer
 
 
@@ -11,9 +12,9 @@ class StructureRenderer(BaseRenderer):
         """Charge le template et effectue les remplacements de variables."""
         # _load_template ira chercher dans ...templates.structure/
         content = self._load_template(template_name)
-        
+
         if context:
             for key, value in context.items():
                 content = content.replace(f"{{{{{key}}}}}", value)
-        
+
         return content

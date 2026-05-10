@@ -1,5 +1,6 @@
-from contextlib import asynccontextmanager
 import asyncio
+from contextlib import asynccontextmanager
+
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
@@ -10,6 +11,7 @@ from sqlalchemy.ext.asyncio import (
 from nova_api_core.core.application.exception.exception import (
     DatabaseException,
 )
+
 
 class SQLAlchemyDatabaseManager:
     def __init__(
@@ -59,7 +61,7 @@ class SQLAlchemyDatabaseManager:
             try:
                 session = self.session_factory()
                 await session.execute(text("SELECT 1"))
-                break 
+                break
             except Exception as e:
                 if session:
                     await session.close()

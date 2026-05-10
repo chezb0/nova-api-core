@@ -1,4 +1,5 @@
 from typing import Any, Dict
+
 from nova_api_core.cli.renderers.base import BaseRenderer
 
 

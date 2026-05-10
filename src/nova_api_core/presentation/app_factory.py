@@ -44,8 +44,7 @@ def create_app(
 
         except AppException as app_exception:
             logger.critical(
-                app_exception.technical_details
-                or "[APP EXCEPTION] STARTUP FAILED"
+                app_exception.technical_details or "[APP EXCEPTION] STARTUP FAILED"
             )
             raise
 
@@ -121,7 +120,6 @@ def create_app(
                 return to_fastapi_response(err)
 
             return _handler
-
 
         if error_handlers:
             for handler in error_handlers:
