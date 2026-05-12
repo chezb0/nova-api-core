@@ -1,3 +1,4 @@
+import json
 import subprocess
 from pathlib import Path
 
@@ -74,6 +75,20 @@ def init_command(name: str, db: DatabaseType) -> None:
         )
     except Exception:
         pass
+
+    # =========================
+    # NOVA CONFIG
+    # =========================
+    (project_path / "nova_core.json").write_text(
+        json.dumps(
+            {
+                "project_name": name,
+                "database": db.value,
+                "nova_api_core_version": "0.1.0",
+            },
+            indent=4,
+        )
+    )
 
     print(f"\n[bold green]✨ Project {name} is ready![/bold green]")
     print("[yellow]Next steps:[/yellow]")

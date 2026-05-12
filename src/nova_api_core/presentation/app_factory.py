@@ -100,17 +100,14 @@ def create_app(
                 app.include_router(router)
 
         # ROOT ENDPOINT API...
-        @app.get("/")
-        def root() -> dict[str, Any]:
-            return {
-                "message": "API running...",
-                "docs": "/docs",
-            }
+        @app.get("/")  # type: ignore[untyped-decorator]
+        def root() -> dict[str, str]:
+            return {"message": "API running...", "docs": "/docs"}
 
         # =========================
         # Error handlers
         # =========================
-        def build_exception_handler(handler: ErrorHandler):
+        def build_exception_handler(handler: ErrorHandler) -> Any:
 
             async def _handler(
                 request: Request,

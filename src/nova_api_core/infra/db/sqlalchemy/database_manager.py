@@ -1,5 +1,6 @@
 import asyncio
 from contextlib import asynccontextmanager
+from typing import Any, Optional
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import (
@@ -21,13 +22,13 @@ class SQLAlchemyDatabaseManager:
         echo: bool = False,
         max_session_retries: int = 3,
         retry_delay_seconds: float = 1.0,
-    ):
+    ) -> None:
         self.database_url = database_url
         self.echo = echo
         self.max_session_retries = max_session_retries
         self.retry_delay_seconds = retry_delay_seconds
-        self.engine = None
-        self.session_factory = None
+        self.engine: Optional[Any] = None
+        self.session_factory: Optional[async_sessionmaker[AsyncSession]] = None
 
     async def connect(self) -> None:
         try:
@@ -50,15 +51,16 @@ class SQLAlchemyDatabaseManager:
             )
 
     @asynccontextmanager
-    async def get_session(self):
+    async def get_session(self):  # type: ignore[no-untyped-def]
         if not self.session_factory:
             await self.connect()
 
-        session = None
-        last_exception = None
+        session: Optional[AsyncSession] = None
+        last_exception: Optional[Exception] = None
 
         for attempt in range(1, self.max_session_retries + 1):
             try:
+                assert self.session_factory is not None
                 session = self.session_factory()
                 await session.execute(text("SELECT 1"))
                 break
@@ -74,15 +76,18 @@ class SQLAlchemyDatabaseManager:
                 await asyncio.sleep(self.retry_delay_seconds)
 
         try:
+            assert session is not None
             yield session
             await session.commit()
         except Exception as e:
+            assert session is not None
             await session.rollback()
             raise DatabaseException(
                 message="Une erreur est survenue lors de la récupération de la session de base de données",
                 technical_details=str(e),
             )
         finally:
+            assert session is not None
             await session.close()
 
     async def disconnect(self) -> None:
