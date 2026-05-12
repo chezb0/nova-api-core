@@ -71,5 +71,8 @@ strict = true
 exclude = ["src/nova_api_core/cli"]
 ignore_missing_imports = true
 
+[tool.setuptools.package-data]
+nova_api_core = ["cli/templates/**/*.tmpl"]
+
 [project.scripts]
 nova = "nova_api_core.cli.main:main"
