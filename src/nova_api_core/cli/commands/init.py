@@ -93,4 +93,7 @@ def init_command(name: str, db: DatabaseType) -> None:
     print(f"\n[bold green]✨ Project {name} is ready![/bold green]")
     print("[yellow]Next steps:[/yellow]")
     print(f"  1. cd {name}")
-    print("  2. uvicorn app:app --host localhost --port 8001")
+    print(
+        "  2. nova crud your_resource (ex: users or you can do that later, full doc: https://gence.bemanjary.com/fr/products/nova-api-core)"
+    )
+    print("  3. uvicorn app:app --host localhost --port 8001")
