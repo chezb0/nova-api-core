@@ -20,7 +20,7 @@ Most frameworks either hide complexity or enforce rigid patterns. Nova takes a d
 
 ---
 
-## 🏗️ Project Structure
+## 🏗️ Generated Project Structure
 ```
 my_project/
 ├── app.py                        # Application entry point
