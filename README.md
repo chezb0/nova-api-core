@@ -21,12 +21,39 @@ Most frameworks either hide complexity or enforce rigid patterns. Nova takes a d
 ---
 
 ## 🏗️ Project Structure
-
-core/ → business logic, config system, abstractions  
-infra/ → external implementations (logger, db, providers)  
-presentation/ → API layer (routes, handlers)  
-tests/ → unit & integration tests  
-
+```
+my_project/
+├── app.py                        # Application entry point
+├── pyproject.toml               # Project dependencies and build config
+├── nova_core.json               # Framework configuration file
+├── .env.base                    # Base environment variables
+├── .env.dev                     # Development environment variables
+├── .env.prod                    # Production environment variables
+│
+├── core/                        # Business logic layer (pure domain rules)
+│   ├── config/                  # Core configuration (shared settings, constants)
+│   ├── domain/                 # Domain layer (business concepts)
+│   │   ├── models/             # Domain models (business objects)
+│   │   ├── schemas/            # Data validation / DTOs
+│   │   └── entities/           # Core entities (business rules objects)
+│   └── use_cases/              # Application use cases (business actions / services)
+│
+├── infra/                       # Infrastructure layer (external systems)
+│   ├── logger/                 # Logging system setup
+│   ├── db/                     # Database implementations
+│   │   ├── sqlalchemy/        # SQLAlchemy implementation
+│   │   └── mongo/             # MongoDB implementation
+│   └── config/                # Infrastructure-specific configuration
+│
+├── presentation/                # API / interface layer (FastAPI, controllers)
+│   ├── app_factory.py          # Application factory (FastAPI app builder)
+│   ├── routes/                 # API route definitions (endpoints)
+│   ├── schemas/                # Request/response schemas (API layer DTOs)
+│   ├── exception_handlers/     # Global API exception handling
+│   └── utils/                  # Presentation helpers (response formatting, etc.)
+│
+└── tests/                       # Unit and integration tests
+```
 No hidden layers. No implicit wiring.
 
 ---
@@ -47,9 +74,16 @@ pip install git+https://github.com/chezb0/nova-api-core.git
 
 # Create project
 ```
-nova init my_project (optional: --db sqlalchemy | mongodb, this command automatically generates and configures your database manager)
+nova init my_project --db sqlalchemy
 cd my_project
 ```
+NOTE: --db sqlalchemy | mongodb, this command automatically generates and configures your database manager
+
+# Generate CRUD
+```
+nova crud products
+```
+NOTE: nova crud {resource} generates a full CRUD for the {resource}, including use cases, routes, dependency injection (deps), schemas, and models ready for adding your personal fields.
 
 # Run API
 ```
@@ -197,3 +231,44 @@ Maintained by `Gence Lucien dit Bemanjary` — feel free to contribute or reuse 
 ## ⭐ Support
 
 If you like the project, give it a star and follow its evolution.
+
+
+## 📜 License
+
+This project is licensed under a custom source-available license.
+
+**Copyright (c) 2026 Gence Lucien dit Bemanjary**
+
+---
+
+### ✅ You are free to:
+- Use this framework for personal, educational, and commercial purposes  
+- Modify the source code  
+- Distribute and fork the project  
+- Use it inside commercial applications or services  
+
+---
+
+### ⚠️ Conditions:
+- You must keep the original author attribution visible  
+- You must clearly indicate any modifications made  
+- You must include the license notice in all copies or derivatives  
+
+---
+
+### ❌ You are NOT allowed to:
+- Sell this framework in its original or modified form  
+- Repackage and sell it as a standalone product  
+- Commercialize it as a competing framework  
+
+---
+
+### 💼 Commercial use:
+You may use this framework inside commercial products or services as a dependency or component.
+
+However, you are not allowed to sell the framework itself or any modified version of it.
+
+---
+
+### 📬 Permissions:
+For commercial licensing or resale rights, please contact the author.

@@ -1,5 +1,6 @@
 import asyncio
 from contextlib import asynccontextmanager
+from typing import Any, Optional
 
 from motor.motor_asyncio import AsyncIOMotorClient
 
@@ -17,13 +18,13 @@ class MongoDatabaseManager(DatabaseManager):
         database_name: str,
         max_session_retries: int = 3,
         retry_delay_seconds: float = 1.0,
-    ):
+    ) -> None:
         self.database_url = database_url
         self.database_name = database_name
         self.max_session_retries = max_session_retries
         self.retry_delay_seconds = retry_delay_seconds
-        self.client = None
-        self.db = None
+        self.client: Optional[AsyncIOMotorClient[Any]] = None
+        self.db: Optional[Any] = None
 
     async def connect(self) -> None:
         try:
@@ -37,12 +38,14 @@ class MongoDatabaseManager(DatabaseManager):
             )
 
     @asynccontextmanager
-    async def get_session(self):
+    async def get_session(self):  # type: ignore[no-untyped-def, override]
         if self.client is None:
             await self.connect()
 
+        last_exception: Optional[Exception] = None
         for attempt in range(1, self.max_session_retries + 1):
             try:
+                assert self.client is not None
                 await self.client.admin.command("ping")
                 break
             except Exception as e:
@@ -55,7 +58,7 @@ class MongoDatabaseManager(DatabaseManager):
                 await asyncio.sleep(self.retry_delay_seconds)
 
         try:
-            # Ici, 'self.db' fait office de session/handle pour MongoDB
+            assert self.db is not None
             yield self.db
         except Exception as e:
             raise DatabaseException(

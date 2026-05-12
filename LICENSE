@@ -1,0 +1,71 @@
+Custom Source-Available License (Non-Resale Commercial Use)
+
+Copyright (c) 2026 Gence Lucien dit Bemanjary
+
+All rights reserved.
+
+This software is provided under a custom source-available license.
+
+────────────────────────────────────────
+1. PERMISSIONS GRANTED
+────────────────────────────────────────
+
+You are free to:
+
+- Use this software for personal, educational, and commercial purposes
+- Integrate this software into commercial applications, products, or services
+- Modify the source code freely
+- Fork, copy, and distribute this software
+- Publish modified versions of this software
+
+────────────────────────────────────────
+2. CONDITIONS
+────────────────────────────────────────
+
+Any redistribution (original or modified) must:
+
+- Retain the original copyright notice:
+  "Copyright (c) 2026 Gence Lucien dit Bemanjary"
+- Clearly indicate any modifications made to the original source
+- Include this license text in all copies or substantial portions of the software
+
+────────────────────────────────────────
+3. RESTRICTIONS
+────────────────────────────────────────
+
+You may NOT:
+
+- Sell this software in its original form
+- Sell modified versions of this software
+- Repackage this software as a standalone commercial product
+- Redistribute this software as a competing framework for commercial resale
+
+────────────────────────────────────────
+4. COMMERCIAL USAGE
+────────────────────────────────────────
+
+Commercial use of this software is permitted when:
+
+- The software is used as a dependency or component inside a larger application, system, or service
+- The software is not the primary product being sold or licensed
+
+Any direct commercial sale or licensing of this framework itself requires explicit written permission from the author.
+
+────────────────────────────────────────
+5. PERMISSION CONTACT
+────────────────────────────────────────
+
+For commercial licensing, resale rights, or special permissions,
+please contact the author.
+
+────────────────────────────────────────
+6. DISCLAIMER
+────────────────────────────────────────
+
+THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+NON-INFRINGEMENT.
+
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES,
+OR OTHER LIABILITY ARISING FROM THE USE OF THIS SOFTWARE.
