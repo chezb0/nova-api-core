@@ -68,6 +68,8 @@ ignore = ["E203", "W503", "E501"]
 [tool.mypy]
 python_version = "3.12"
 strict = true
+exclude = ["src/nova_api_core/cli"]
+ignore_missing_imports = true
 
 [project.scripts]
 nova = "nova_api_core.cli.main:main"

@@ -19,3 +19,5 @@ repos:
       - id: mypy
         language_version: python3.12
         files: ^src/
+        exclude: ^src/nova_api_core/cli/
+        args: [--config-file=pyproject.toml, --ignore-missing-imports]

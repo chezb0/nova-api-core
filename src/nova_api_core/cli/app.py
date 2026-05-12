@@ -1,5 +1,6 @@
 import typer
 
+from nova_api_core.cli.commands.crud import crud_command
 from nova_api_core.cli.commands.init import init_command
 from nova_api_core.core.types.database_type import DatabaseType
 
@@ -33,6 +34,14 @@ def init(
     """
     # Ici on passe bien 'name' et 'db' à la commande d'initialisation
     init_command(name, db)
+
+
+# =========================
+# CRUD
+# =========================
+@app.command("crud")
+def crud(name: str):
+    crud_command(name=name)
 
 
 if __name__ == "__main__":
