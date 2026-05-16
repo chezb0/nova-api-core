@@ -70,5 +70,11 @@ dependencies = [
 ]
 """
 
+    def render_requirements(self) -> str:
+        """Produit le fichier requirements.txt pour l'utilisateur final."""
+        return (
+            """nova-api-core @ git+https://github.com/chezb0/nova-api-core.git@latest"""
+        )
+
     def render_structure(self, template_name: str, context: dict = None) -> str:
         return self.structure.render(template_name, context)
