@@ -42,7 +42,8 @@ def init_command(name: str, db: DatabaseType) -> None:
 
     # 2. Génération et écriture des fichiers racine et config
     (project_path / "app.py").write_text(renderer.render_app_entrypoint(db))
-    (project_path / "pyproject.toml").write_text(renderer.render_pyproject(name))
+    # (project_path / "pyproject.toml").write_text(renderer.render_pyproject(name))
+    (project_path / "requirements.txt").write_text(renderer.render_requirements())
     (project_path / "core/config/app_config.py").write_text(
         renderer.render_app_config(db)
     )
