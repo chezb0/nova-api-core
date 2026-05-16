@@ -104,7 +104,7 @@ class ConfigLoader:
             if not found:
                 raise ConfigurationException(
                     message=f"Missing configuration '{key}'",
-                    technical_details="Not found in any provider",
+                    technical_details=f"{key} is not found in any provider",
                 )
 
             result[key] = cast_value(key, value, f.type)
