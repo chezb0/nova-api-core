@@ -19,7 +19,13 @@ bootstrap_provider = EnvProvider(".env.base")
 bootstrap = ConfigLoader.load_bootstrap(bootstrap_provider)
 
 # 2. LOGGER
-logger = JsonLogger(app_name=bootstrap.APP_NAME, environment=bootstrap.ENV)
+logger = JsonLogger(
+    app_name=bootstrap.APP_NAME, 
+    environment=bootstrap.ENV, 
+    log_level=bootstrap.LOG_LEVEL,
+    log_output=bootstrap.LOG_OUTPUT,
+    log_file_path=bootstrap.LOG_FILE_PATH
+)
 
 try:
     # 3. ENV CONFIG
