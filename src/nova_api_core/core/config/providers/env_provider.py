@@ -11,7 +11,7 @@ class EnvProvider:
     def load(self) -> dict[str, Any]:
         # Load .env file if provided
         if self.env_file:
-            load_dotenv(self.env_file)
+            load_dotenv(self.env_file, override=False)
 
         # Return environment variables
         return dict(os.environ)
