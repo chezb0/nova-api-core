@@ -1,19 +1,19 @@
-from nova_api_core.infra.db.sqlalchemy.database_manager import SQLAlchemyDatabaseManager
+    from nova_api_core.infra.db.sqlalchemy.database_manager import SQLAlchemyDatabaseManager
 
-def get_database_manager(config: AppConfig) -> SQLAlchemyDatabaseManager:
-    password = quote_plus(config.DB_PASSWORD)
-    if config.DB_ENGINE == "sqlite+aiosqlite":
-        db_url = f"{config.DB_ENGINE}:///./{config.DB_NAME}.db"
-    else:
-        db_url = (
-            f"{config.DB_ENGINE}://"
-            f"{config.DB_USER}:{password}@"
-            f"{config.DB_HOST}:{config.DB_PORT}/"
-            f"{config.DB_NAME}"
+    def get_database_manager(config: AppConfig) -> SQLAlchemyDatabaseManager:
+        password = quote_plus(config.DB_PASSWORD)
+        if config.DB_ENGINE == "sqlite+aiosqlite":
+            db_url = f"{config.DB_ENGINE}:///./{config.DB_NAME}.db"
+        else:
+            db_url = (
+                f"{config.DB_ENGINE}://"
+                f"{config.DB_USER}:{password}@"
+                f"{config.DB_HOST}:{config.DB_PORT}/"
+                f"{config.DB_NAME}"
+            )
+
+        return SQLAlchemyDatabaseManager(
+            database_url=db_url,
+            max_session_retries=config.DB_MAX_RETRIES,
+            retry_delay_seconds=config.DB_RETRY_DELAY
         )
-
-    return SQLAlchemyDatabaseManager(
-        database_url=db_url,
-        max_session_retries=config.DB_MAX_RETRIES,
-        retry_delay_seconds=config.DB_RETRY_DELAY
-    )
