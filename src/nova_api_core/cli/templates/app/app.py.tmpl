@@ -47,7 +47,7 @@ try:
         logger=logger,
         routes=ROUTES,
         error_handlers=ERROR_HANDLERS,
-        db_manager=database_manager,
+        #db_manager=database_manager, (Activate that if your database is ready)
     )
 
 except AppException as app_exc:
