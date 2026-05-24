@@ -1,4 +1,4 @@
-    from nova_api_core.infra.db.sqlalchemy.database_manager import SQLAlchemyDatabaseManager
+from nova_api_core.infra.db.sqlalchemy.database_manager import SQLAlchemyDatabaseManager
 
     def get_database_manager(config: AppConfig) -> SQLAlchemyDatabaseManager:
         password = quote_plus(config.DB_PASSWORD)
