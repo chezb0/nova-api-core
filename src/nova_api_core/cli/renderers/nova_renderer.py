@@ -1,3 +1,4 @@
+from nova_api_core import __version__
 from nova_api_core.cli.metadata.db_metadata import BOOTSTRAP_DEFAULTS, DB_METADATA
 from nova_api_core.cli.renderers.config import ConfigRenderer
 from nova_api_core.cli.renderers.database import DatabaseRenderer
@@ -58,7 +59,14 @@ class NovaRenderer:
 
         return self.config.render_env(variables)
 
-    def render_pyproject(self, project_name: str) -> str:
+    def _nova_requirement(self, db_type: DatabaseType) -> str:
+        """Dépendance nova-api-core épinglée sur la version qui a généré le projet."""
+        metadata = DB_METADATA.get(db_type, DB_METADATA[DatabaseType.NONE])
+        extra = metadata.get("requirement_extra")
+        extras = f"[{extra}]" if extra else ""
+        return f"nova-api-core{extras}=={__version__}"
+
+    def render_pyproject(self, project_name: str, db_type: DatabaseType) -> str:
         """Produit le contenu du fichier pyproject.toml pour l'utilisateur final."""
         return f"""[project]
 name = "{project_name}"
@@ -66,15 +74,13 @@ version = "0.1.0"
 requires-python = ">=3.12"
 
 dependencies = [
-    "nova-api-core @ git+https://github.com/chezb0/nova-api-core.git@latest"
+    "{self._nova_requirement(db_type)}"
 ]
 """
 
-    def render_requirements(self) -> str:
+    def render_requirements(self, db_type: DatabaseType) -> str:
         """Produit le fichier requirements.txt pour l'utilisateur final."""
-        return (
-            """nova-api-core @ git+https://github.com/chezb0/nova-api-core.git@latest"""
-        )
+        return f"{self._nova_requirement(db_type)}\n"
 
     def render_structure(self, template_name: str, context: dict = None) -> str:
         return self.structure.render(template_name, context)

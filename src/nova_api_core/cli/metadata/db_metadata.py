@@ -2,6 +2,8 @@ from nova_api_core.core.types.database_type import DatabaseType
 
 DB_METADATA = {
     DatabaseType.SQLALCHEMY: {
+        # Matches the default DB_ENGINE below (use "postgres" for postgresql+asyncpg)
+        "requirement_extra": "mysql",
         "manager_import": "from nova_api_core.infra.db.sqlalchemy.database_manager import SQLAlchemyDatabaseManager",
         "config_fields": {
             "DB_ENGINE": "str",
@@ -25,6 +27,7 @@ DB_METADATA = {
         },
     },
     DatabaseType.MONGODB: {
+        "requirement_extra": "mongo",
         "manager_import": "from nova_api_core.infra.db.mongo.mongo_database_manager import MongoDatabaseManager",
         "config_fields": {
             "DB_HOST": "str",

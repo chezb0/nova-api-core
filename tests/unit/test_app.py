@@ -46,8 +46,7 @@ def test_routes_registration():
         routes=[router],
     )
 
-    paths = [route.path for route in app.routes]
-    assert "/ping" in paths
+    assert "/ping" in app.openapi()["paths"]
 
 
 def test_lifecycle():

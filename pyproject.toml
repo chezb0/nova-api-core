@@ -2,45 +2,81 @@
 name = "nova-api-core"
 version = "0.1.0"
 description = "Clean Architecture FastAPI Framework"
+readme = "README.md"
+license = "LicenseRef-Nova-Source-Available"
+license-files = ["LICENSE"]
 authors = [{ name = "Gence Lucien dit Bemanjary" }]
 requires-python = ">=3.12"
+keywords = ["fastapi", "framework", "clean-architecture", "api", "cli", "scaffolding"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Framework :: FastAPI",
+    "Framework :: AsyncIO",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Typing :: Typed",
+]
 
 dependencies = [
-    "fastapi==0.135.3",
-    "uvicorn==0.43.0",
-    "pydantic==2.13.0",
-    "sqlalchemy==2.0.49",
-    "httpx==0.27.2",
-    "python-dotenv==1.2.2",
-    "hvac==2.4.0",
-    "typer==0.15.1",
-    "click==8.1.7",
-    "rich==13.9.0",
-    "types-hvac==2.4.0.20260408",
-    "aiosqlite==0.21.0",
-    "motor==3.7.1",
-    "asyncpg==0.30.0",
-    "aiomysql==0.2.0", 
-    "cryptography==48.0.0"
+    "fastapi>=0.135,<1.0",
+    "uvicorn>=0.43",
+    "pydantic>=2.13,<3.0",
+    "sqlalchemy[asyncio]>=2.0.49,<3.0",
+    "python-dotenv>=1.2",
+    "typer>=0.15",
+    "rich>=13.9",
 ]
 
 [project.optional-dependencies]
+postgres = ["asyncpg>=0.30"]
+mysql = ["aiomysql>=0.2", "cryptography>=44"]
+sqlite = ["aiosqlite>=0.21"]
+mongo = ["motor>=3.7"]
+vault = ["hvac>=2.4"]
+all = [
+    "asyncpg>=0.30",
+    "aiomysql>=0.2",
+    "cryptography>=44",
+    "aiosqlite>=0.21",
+    "motor>=3.7",
+    "hvac>=2.4",
+]
 dev = [
-    "pytest==8.4.2",
-    "pytest-asyncio==1.2.0",
-    "ruff==0.15.9",
-    "mongomock-motor==0.0.36",
+    "nova-api-core[all]",
+    "pytest>=8.4",
+    "pytest-asyncio>=1.2",
+    "httpx>=0.27",
+    "ruff>=0.15",
+    "mongomock-motor>=0.0.36",
+    "types-hvac>=2.4",
 
     # Code quality
     "black>=24.0.0",
     "isort>=8.0.1",
     "flake8>=7.0.0",
     "mypy>=1.20.1",
-    "pre-commit>=3.7.0"
+    "pre-commit>=3.7.0",
+
+    # Packaging
+    "build>=1.2",
+    "twine>=6.0",
 ]
 
+[project.urls]
+Homepage = "https://github.com/chezb0/nova-api-core"
+Repository = "https://github.com/chezb0/nova-api-core"
+Issues = "https://github.com/chezb0/nova-api-core/issues"
+
+[project.scripts]
+nova = "nova_api_core.cli.main:main"
+
 [build-system]
-requires = ["setuptools==70.0.0"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
@@ -50,6 +86,9 @@ package-dir = {"" = "src"}
 where = ["src"]
 include = ["nova_api_core*"]
 namespaces = false
+
+[tool.setuptools.package-data]
+nova_api_core = ["py.typed", "cli/templates/**/*.tmpl"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
@@ -71,9 +110,3 @@ python_version = "3.12"
 strict = true
 exclude = ["src/nova_api_core/cli"]
 ignore_missing_imports = true
-
-[tool.setuptools.package-data]
-nova_api_core = ["cli/templates/**/*.tmpl"]
-
-[project.scripts]
-nova = "nova_api_core.cli.main:main"

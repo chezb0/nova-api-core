@@ -69,7 +69,17 @@ venv\Scripts\activate     # Windows
 
 # Install Nova
 ```
-pip install git+https://github.com/chezb0/nova-api-core.git
+pip install nova-api-core
+```
+
+Database drivers and integrations are optional extras:
+```
+pip install "nova-api-core[postgres]"   # asyncpg
+pip install "nova-api-core[mysql]"      # aiomysql
+pip install "nova-api-core[sqlite]"     # aiosqlite
+pip install "nova-api-core[mongo]"      # motor
+pip install "nova-api-core[vault]"      # HashiCorp Vault (hvac)
+pip install "nova-api-core[all]"        # everything
 ```
 
 # Create project
